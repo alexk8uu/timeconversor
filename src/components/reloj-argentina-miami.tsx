@@ -28,32 +28,25 @@ const TimeInput = ({ value, onChange, isDarkMode, label }: any) => (
   </div>
 );
 
-const TimeDisplay = ({
-  country,
-  timezone,
-}: {
-  country: string;
-  timezone: string;
-}) => {
-  const [currentTime, setCurrentTime] = useState<string>("");
-  const [currentDate, setCurrentDate] = useState<string>("");
-  const [weekNumber, setWeekNumber] = useState<number>(0);
+export function RelojArgentinaMiami() {
+  const [time, setTime] = useState(new Date());
+  const [miamiTime, setMiamiTime] = useState("");
+  const [argentinaTime, setArgentinaTime] = useState("");
+  const [convertedTime, setConvertedTime] = useState("");
+  const [isArgentinaToMiami, setIsArgentinaToMiami] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setCurrentTime(formatTime(timezone, now));
-      setCurrentDate(formatDate(timezone, now));
-      setWeekNumber(getWeekNumber(now));
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
     };
+  }, []);
 
-    updateTime();
-    const timer = setInterval(updateTime, 1000);
-
-    return () => clearInterval(timer);
-  }, [timezone]);
-
-  const formatTime = (timezone: string, date: Date) => {
+  const formatTime = (timezone: string) => {
     return new Intl.DateTimeFormat("es-AR", {
       timeZone: timezone,
       hour: "2-digit",
@@ -61,19 +54,19 @@ const TimeDisplay = ({
       second: "2-digit",
       hour12: true,
     })
-      .format(date)
+      .format(time)
       .replace(/\s/g, "")
       .toLowerCase();
   };
 
-  const formatDate = (timezone: string, date: Date) => {
+  const formatDate = (timezone: string) => {
     return new Intl.DateTimeFormat("es-AR", {
       timeZone: timezone,
       weekday: "long",
       year: "numeric",
       month: "long",
       day: "numeric",
-    }).format(date);
+    }).format(time);
   };
 
   const getWeekNumber = (date: Date) => {
@@ -86,27 +79,25 @@ const TimeDisplay = ({
     return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
   };
 
-  return (
+  const TimeDisplay = ({
+    country,
+    timezone,
+  }: {
+    country: string;
+    timezone: string;
+  }) => (
     <div className="mb-16 last:mb-0 text-center">
       <h2 className="text-lg sm:text-xl font-normal mb-2">
         La hora actual en {country} es
       </h2>
       <p className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-2">
-        {currentTime}
+        {formatTime(timezone)}
       </p>
       <p className="text-base sm:text-lg md:text-xl font-normal">
-        {currentDate}, Semana {weekNumber}
+        {formatDate(timezone)}, Semana {getWeekNumber(time)}
       </p>
     </div>
   );
-};
-
-export default function Home() {
-  const [miamiTime, setMiamiTime] = useState("");
-  const [argentinaTime, setArgentinaTime] = useState("");
-  const [convertedTime, setConvertedTime] = useState("");
-  const [isArgentinaToMiami, setIsArgentinaToMiami] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const convertTime = () => {
     if (isArgentinaToMiami) {
