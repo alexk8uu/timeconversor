@@ -6,8 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Moon, Sun, Clock } from "lucide-react";
+import { TimeInputProps } from "./types";
 
-const TimeInput = ({ value, onChange, isDarkMode, label }: any) => (
+const TimeInput: React.FC<TimeInputProps> = ({
+  value,
+  onChange,
+  isDarkMode,
+  label,
+}) => (
   <div className="relative">
     <Input
       type="time"
@@ -195,7 +201,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
             <TimeInput
               value={isArgentinaToMiami ? argentinaTime : miamiTime}
-              onChange={(e: any) =>
+              onChange={(e) =>
                 isArgentinaToMiami
                   ? setArgentinaTime(e.target.value)
                   : setMiamiTime(e.target.value)
